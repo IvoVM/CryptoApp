@@ -28,6 +28,12 @@
     },
     "web": {
       "favicon": "./assets/favicon.png"
-    }
+    },
+    "extra": {
+      "eas": {
+        "projectId": "cb4e7464-dc00-4de3-bd39-166de8747f7b"
+      }
+    },
+    "owner": "ivovm"
   }
 }
