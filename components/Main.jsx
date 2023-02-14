@@ -1,8 +1,10 @@
-import { View, FlatList,StyleSheet } from "react-native";
+import { View, FlatList, StyleSheet, TextInput, Text } from "react-native";
 import { useEffect, useState } from "react";
 import Coin from "./Coin";
 const Main = () => {
   const [coins, setCoins] = useState([]);
+  const [search, setSearch] = useState("");
+  const [refreshing, setRefreshing] = useState(false);
 
   const fetchData = async () => {
     let res = await fetch(
@@ -16,22 +18,58 @@ const Main = () => {
     fetchData();
   }, []);
   return (
-    <View style={styles.main}>
+    <View>
+      <View style={styles.header}>
+        <Text style={styles.title}>CryptoMarket</Text>
+        <TextInput
+          style={styles.searchInput}
+          onChangeText={(text) => setSearch(text)}
+          placeholder="Search a Coin"
+          placeholderTextColor="#858585"
+        ></TextInput>
+      </View>
       <FlatList
+        style={styles.list}
         key={coins.id}
-        data={coins}
+        data={coins.filter(
+          (coin) =>
+            coin.name.toLowerCase().includes(search) ||
+            coin.symbol.toLowerCase().includes(search)
+        )}
         renderItem={({ item }) => {
           return <Coin coin={item} />;
+        }}
+        refreshing={refreshing}
+        onRefresh={async () => {
+          setRefreshing(true);
+          await fetchData();
+          setRefreshing(false);
         }}
       />
     </View>
   );
 };
 const styles = StyleSheet.create({
-  main: {
-    flex:1,
-    backgroundColor:'#141414',
-    alignItems:'center'
+  title: {
+    color: "#fff",
+    marginTop: 10,
+    fontSize: 20,
+  },
+  list: {
+    width: "90%",
+  },
+  header: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    width: "90%",
+    marginBottom: 10,
+  },
+  searchInput: {
+    color: "#fff",
+    borderBottomColor: "#4657ce",
+    borderBottomWidth: 1,
+    width: "50%",
+    textAlign: "center",
   },
 });
 export default Main;
